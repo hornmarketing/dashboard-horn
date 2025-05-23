@@ -14,11 +14,7 @@ escopos = [
     "https://www.googleapis.com/auth/drive",
 ]
 
-# Lê o segredo salvo no Streamlit
-json_key = os.environ.get("GOOGLE_SERVICE_ACCOUNT")
-
-# Converte o texto para dicionário
-info = json.loads(json_key)
+info = st.secrets["google_credentials"]  # ✅ direto
 
 # Usa as credenciais a partir do dicionário
 credenciais = ServiceAccountCredentials.from_json_keyfile_dict(info, escopos)
