@@ -53,11 +53,8 @@ df_valores = df_valores.fillna(0)
 meses_ordenados = ['jan.-24', 'fev.-24', 'mar.-24', 'abr.-24', 'mai.-24', 'jun.-24',
                    'jul.-24', 'ago.-24', 'set.-24', 'out.-24', 'nov.-24', 'dez.-24']
 meses_formatados = pd.to_datetime(
-    [m.replace("jan.", "jan").replace("fev.", "fev").replace("mar.", "mar")
-     .replace("abr.", "abr").replace("mai.", "mai").replace("jun.", "jun")
-     .replace("jul.", "jul").replace("ago.", "ago").replace("set.", "set")
-     .replace("out.", "out").replace("nov.", "nov").replace("dez.", "dez")
-     for m in meses_ordenados], format="%b-%y"
+    [m.replace(".", "") for m in meses_ordenados],
+    format='mixed'
 ).strftime("%b/%y")
 
 # Converte para datetime e formata
