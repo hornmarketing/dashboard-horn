@@ -2,18 +2,27 @@
 import pandas as pd
 import plotly.graph_objects as go
 import gspread
-from oauth2client.service_account import ServiceAccountCredentials
 from pathlib import Path
+import os
+import json
+from oauth2client.service_account import ServiceAccountCredentials
+
+# Lê o segredo salvo no Streamlit
+json_key = os.environ.get("GOOGLE_SERVICE_ACCOUNT")
+
+# Converte o texto para dicionário
+info = json.loads(json_key)
+
+# Usa as credenciais a partir do dicionário
+credenciais = ServiceAccountCredentials.from_json_keyfile_dict(info, escopos)
 
 # === CONFIGURAÇÕES ===
-json_path = "dashboard-horn-0e6dfbc7b05b.json"
 sheet_id = "1BJ6gwg0uyIg7nP3NV1CSIsCa14rrXlF-bbfOyHLC1Gg"
 aba_nome = "entrada"
 saida = "/Users/samillyteixeirafernandesferreira/Desktop/Horn Agência/"
 
 # === CONEXÃO COM GOOGLE SHEETS ===
 escopos = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-credenciais = ServiceAccountCredentials.from_json_keyfile_name(json_path, escopos)
 cliente = gspread.authorize(credenciais)
 planilha = cliente.open_by_key(sheet_id)
 aba = planilha.worksheet(aba_nome)
