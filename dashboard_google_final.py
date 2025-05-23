@@ -4,8 +4,15 @@ import plotly.graph_objects as go
 import gspread
 from pathlib import Path
 import os
+import streamlit as st
 import json
 from oauth2client.service_account import ServiceAccountCredentials
+
+# === CONEXÃO COM GOOGLE SHEETS ===
+escopos = [
+    "https://spreadsheets.google.com/feeds",
+    "https://www.googleapis.com/auth/drive",
+]
 
 # Lê o segredo salvo no Streamlit
 json_key = os.environ.get("GOOGLE_SERVICE_ACCOUNT")
