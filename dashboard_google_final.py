@@ -60,6 +60,9 @@ meses_formatados = pd.to_datetime(
      for m in meses_ordenados], format="%b-%y"
 ).strftime("%b/%y")
 
+# Converte para datetime e formata
+meses_formatados = pd.to_datetime(meses_ordenados_en, format="%b-%y").strftime("%b/%y")
+
 valores_mensais = df_valores[meses_ordenados].sum()
 df = pd.DataFrame({
     "Mês": meses_formatados,
