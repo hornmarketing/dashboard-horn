@@ -6,7 +6,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 from pathlib import Path
 
 # === CONFIGURAÇÕES ===
-json_path = "/Users/samillyteixeirafernandesferreira/Desktop/Horn Agência/dashboard-horn-0e6dfbc7b05b.json"
+json_path = "dashboard-horn-0e6dfbc7b05b.json"
 sheet_id = "1BJ6gwg0uyIg7nP3NV1CSIsCa14rrXlF-bbfOyHLC1Gg"
 aba_nome = "entrada"
 saida = "/Users/samillyteixeirafernandesferreira/Desktop/Horn Agência/"
