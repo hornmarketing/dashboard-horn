@@ -16,7 +16,7 @@ escopos = [
 ]
 
 # Corrige o uso do segredo como dicionário
-info = json.loads(st.secrets["google_credentials"])
+info = st.secrets["google_credentials"]
 credenciais = ServiceAccountCredentials.from_json_keyfile_dict(info, escopos)
 
 sheet_id = "1BJ6gwg0uyIg7nP3NV1CSIsCa14rrXlF-bbfOyHLC1Gg"
