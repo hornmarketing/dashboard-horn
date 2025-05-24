@@ -5,11 +5,9 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import json
 import base64
-from pathlib import Path
 
 # === CONFIGURAÇÕES ===
 st.set_page_config(page_title=" 🤟🏽Dashboard Horn Marketing 2024", page_icon="🔥", layout="wide")
-saida = "./"
 sheet_id = "1BJ6gwg0uyIg7nP3NV1CSIsCa14rrXlF-bbfOyHLC1Gg"
 aba_nome = "entrada"
 escopos = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
@@ -42,7 +40,6 @@ planilha = cliente.open_by_key(sheet_id)
 aba = planilha.worksheet(aba_nome)
 dados = aba.get_all_values()
 
-# === LIMPEZA ===
 df_raw = pd.DataFrame(dados[1:], columns=dados[0])
 df_raw.columns = df_raw.columns.str.strip().str.lower()
 
@@ -53,11 +50,20 @@ def limpar_valor(valor):
     return float(valor.replace("R$", "").replace(".", "").replace(",", "."))
 
 col_meses = [col for col in df_raw.columns if "-24" in col]
-df_valores = df_raw[col_meses].applymap(limpar_valor).fillna(0)
 
-# === DATAS ===
-meses_ordenados = ['jan.-24', 'fev.-24', 'mar.-24', 'abr.-24', 'mai.-24', 'jun.-24',
-                   'jul.-24', 'ago.-24', 'set.-24', 'out.-24', 'nov.-24', 'dez.-24']
+# === FILTROS ===
+clientes = sorted(df_raw["cliente"].unique())
+tipos_servico = sorted(df_raw["tipo de serviço"].unique())
+meses_disponiveis = col_meses
+
+filtro_cliente = st.sidebar.multiselect("Filtrar por cliente", clientes, default=clientes)
+filtro_servico = st.sidebar.multiselect("Filtrar por tipo de serviço", tipos_servico, default=tipos_servico)
+filtro_meses = st.sidebar.multiselect("Filtrar por mês", meses_disponiveis, default=meses_disponiveis)
+
+# === APLICAR FILTROS ===
+df_filtrado = df_raw[df_raw["cliente"].isin(filtro_cliente)]
+df_filtrado = df_filtrado[df_filtrado["tipo de serviço"].isin(filtro_servico)]
+df_valores_filtrados = df_filtrado[filtro_meses].applymap(limpar_valor).fillna(0)
 
 meses_em_en = {
     'jan.-24': 'Jan-24', 'fev.-24': 'Feb-24', 'mar.-24': 'Mar-24',
@@ -65,27 +71,22 @@ meses_em_en = {
     'jul.-24': 'Jul-24', 'ago.-24': 'Aug-24', 'set.-24': 'Sep-24',
     'out.-24': 'Oct-24', 'nov.-24': 'Nov-24', 'dez.-24': 'Dec-24'
 }
-
-meses_formatados = [meses_em_en[m] for m in meses_ordenados]
+meses_formatados = [meses_em_en[m] for m in filtro_meses]
 meses_formatados = pd.to_datetime(meses_formatados, format="%b-%y").strftime("%b/%y")
 
-# === PREPARAR DADOS PARA GRÁFICOS ===
-valores_mensais = df_valores[meses_ordenados].sum()
-df = pd.DataFrame({
-    "Mês": meses_formatados,
-    "Realizado": valores_mensais.values
-})
+valores_mensais = df_valores_filtrados.sum()
+df = pd.DataFrame({"Mês": meses_formatados, "Realizado": valores_mensais.values})
 df["Acumulado"] = df["Realizado"].cumsum()
 
 # === KPIs ===
 total_anual = df["Realizado"].sum()
-clientes_ativos = df_raw["cliente"].nunique()
-tipos_servico = df_raw["tipo de serviço"].nunique()
+clientes_ativos = df_filtrado["cliente"].nunique()
+tipos_servico_count = df_filtrado["tipo de serviço"].nunique()
 
 st.markdown("""
 <div style='display: flex; justify-content: space-around; margin: 1rem 0;'>
     <div style='background-color:#060D38; padding: 1rem; border-radius: 10px; color: white;'>
-        <h3>Total Vendido</h3><h2>R$ {:,.0f}</h2>
+        <h3>Total Vendido</h3><h2>R$ {:,.2f}</h2>
     </div>
     <div style='background-color:#FF9100; padding: 1rem; border-radius: 10px; color: white;'>
         <h3>Clientes Ativos</h3><h2>{}</h2>
@@ -94,7 +95,7 @@ st.markdown("""
         <h3>Tipos de Serviço</h3><h2>{}</h2>
     </div>
 </div>
-""".format(total_anual, clientes_ativos, tipos_servico), unsafe_allow_html=True)
+""".format(total_anual).replace(",", "X").replace(".", ",").replace("X", ".").format(clientes_ativos, tipos_servico_count), unsafe_allow_html=True)
 
 # === GRÁFICO DE LINHAS ===
 fig_linha = go.Figure()
