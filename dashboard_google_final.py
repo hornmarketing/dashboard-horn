@@ -32,8 +32,7 @@ exibir_logo()
 # === CABEÇALHO ===
 st.markdown("""
     <h1 style='text-align: center; color: #060D38;'> Dashboard de Metas - Horn Agência</h1>
-    <hr style='border: 1px solid #FF9100;'/>
-""", unsafe_allow_html=True)
+    <hr style='border: 1px solid #FF9100;'/>""", unsafe_allow_html=True)
 
 # === CONEXÃO COM GOOGLE SHEETS ===
 info = st.secrets["google_credentials"]
@@ -78,6 +77,25 @@ df = pd.DataFrame({
 })
 df["Acumulado"] = df["Realizado"].cumsum()
 
+# === KPIs ===
+total_anual = df["Realizado"].sum()
+clientes_ativos = df_raw["cliente"].nunique()
+tipos_servico = df_raw["tipo de serviço"].nunique()
+
+st.markdown("""
+<div style='display: flex; justify-content: space-around; margin: 1rem 0;'>
+    <div style='background-color:#060D38; padding: 1rem; border-radius: 10px; color: white;'>
+        <h3>Total Vendido</h3><h2>R$ {:,.0f}</h2>
+    </div>
+    <div style='background-color:#FF9100; padding: 1rem; border-radius: 10px; color: white;'>
+        <h3>Clientes Ativos</h3><h2>{}</h2>
+    </div>
+    <div style='background-color:#060D38; padding: 1rem; border-radius: 10px; color: white;'>
+        <h3>Tipos de Serviço</h3><h2>{}</h2>
+    </div>
+</div>
+""".format(total_anual, clientes_ativos, tipos_servico), unsafe_allow_html=True)
+
 # === GRÁFICO DE LINHAS ===
 fig_linha = go.Figure()
 fig_linha.add_trace(go.Scatter(x=df["Mês"], y=[1_000_000] * len(df),
@@ -109,6 +127,6 @@ st.plotly_chart(fig_barras, use_container_width=True)
 
 # === RODAPÉ ===
 st.markdown("""
-    <hr style='border: 0.5px solid #FF9100;'/>
+    <hr style='border: 0.5px solid #FF9100;' />
     <p style='text-align: center; color: #888;'>Powered by Horn Marketing © 2025</p>
 """, unsafe_allow_html=True)
