@@ -8,8 +8,7 @@ import base64
 from pathlib import Path
 
 # === CONFIGURAÇÕES ===
-st.set_page_config(page_title=" 🤟🏽Dashboard Horn Marketing 2024", page_icon="🔥", layout="wide")
-saida = "./"  # para salvar os HTML localmente, ou ajuste conforme necessário
+st.set_page_config(page_title="Dashboard Horn Marketing 2024", page_icon="🔥", layout="wide")
 sheet_id = "1BJ6gwg0uyIg7nP3NV1CSIsCa14rrXlF-bbfOyHLC1Gg"
 aba_nome = "entrada"
 escopos = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
@@ -21,7 +20,8 @@ def exibir_logo():
         with open(file_path, "rb") as f:
             encoded = base64.b64encode(f.read()).decode()
             st.markdown(
-                f"<div style='text-align:center; margin-bottom: 1rem;'><img src='data:image/png;base64,{encoded}' width='200'/></div>",
+                f"<div style='text-align:center; margin-bottom: 1rem;'>"
+                f"<img src='data:image/png;base64,{encoded}' width='200'/></div>",
                 unsafe_allow_html=True
             )
     except FileNotFoundError:
@@ -31,7 +31,7 @@ exibir_logo()
 
 # === CABEÇALHO ===
 st.markdown("""
-    <h1 style='text-align: center; color: #060D38;'> Dashboard de Metas - Horn Agência</h1>
+    <h1 style='text-align: center; color: #060D38;'>📊 Dashboard de Metas - <span style='color:#FF9100;'>Horn Agência</span></h1>
     <hr style='border: 1px solid #FF9100;'/>
 """, unsafe_allow_html=True)
 
@@ -105,3 +105,4 @@ st.markdown("""
     <hr style='border: 0.5px solid #FF9100;'/>
     <p style='text-align: center; color: #888;'>Powered by Horn Marketing © 2025</p>
 """, unsafe_allow_html=True)
+
