@@ -8,7 +8,8 @@ import base64
 from pathlib import Path
 
 # === CONFIGURAÇÕES ===
-st.set_page_config(page_title="Dashboard Horn Marketing 2024", page_icon="🔥", layout="wide")
+st.set_page_config(page_title=" 🤟🏽Dashboard Horn Marketing 2024", page_icon="🔥", layout="wide")
+saida = "./"
 sheet_id = "1BJ6gwg0uyIg7nP3NV1CSIsCa14rrXlF-bbfOyHLC1Gg"
 aba_nome = "entrada"
 escopos = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
@@ -20,8 +21,7 @@ def exibir_logo():
         with open(file_path, "rb") as f:
             encoded = base64.b64encode(f.read()).decode()
             st.markdown(
-                f"<div style='text-align:center; margin-bottom: 1rem;'>"
-                f"<img src='data:image/png;base64,{encoded}' width='200'/></div>",
+                f"<div style='text-align:center; margin-bottom: 1rem;'><img src='data:image/png;base64,{encoded}' width='200'/></div>",
                 unsafe_allow_html=True
             )
     except FileNotFoundError:
@@ -31,7 +31,7 @@ exibir_logo()
 
 # === CABEÇALHO ===
 st.markdown("""
-    <h1 style='text-align: center; color: #060D38;'>📊 Dashboard de Metas - <span style='color:#FF9100;'>Horn Agência</span></h1>
+    <h1 style='text-align: center; color: #060D38;'> Dashboard de Metas - Horn Agência</h1>
     <hr style='border: 1px solid #FF9100;'/>
 """, unsafe_allow_html=True)
 
@@ -59,9 +59,16 @@ df_valores = df_raw[col_meses].applymap(limpar_valor).fillna(0)
 # === DATAS ===
 meses_ordenados = ['jan.-24', 'fev.-24', 'mar.-24', 'abr.-24', 'mai.-24', 'jun.-24',
                    'jul.-24', 'ago.-24', 'set.-24', 'out.-24', 'nov.-24', 'dez.-24']
-meses_formatados = pd.to_datetime(
-    [m.replace(".", "") for m in meses_ordenados], format="%b-%y"
-).strftime("%b/%y")
+
+meses_em_en = {
+    'jan.-24': 'Jan-24', 'fev.-24': 'Feb-24', 'mar.-24': 'Mar-24',
+    'abr.-24': 'Apr-24', 'mai.-24': 'May-24', 'jun.-24': 'Jun-24',
+    'jul.-24': 'Jul-24', 'ago.-24': 'Aug-24', 'set.-24': 'Sep-24',
+    'out.-24': 'Oct-24', 'nov.-24': 'Nov-24', 'dez.-24': 'Dec-24'
+}
+
+meses_formatados = [meses_em_en[m] for m in meses_ordenados]
+meses_formatados = pd.to_datetime(meses_formatados, format="%b-%y").strftime("%b/%y")
 
 # === PREPARAR DADOS PARA GRÁFICOS ===
 valores_mensais = df_valores[meses_ordenados].sum()
@@ -105,4 +112,3 @@ st.markdown("""
     <hr style='border: 0.5px solid #FF9100;'/>
     <p style='text-align: center; color: #888;'>Powered by Horn Marketing © 2025</p>
 """, unsafe_allow_html=True)
-
